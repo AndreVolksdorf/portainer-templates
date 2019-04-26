@@ -27,11 +27,6 @@ services:
       MYSQL_PASSWORD: wordpress
     networks:
       - internal
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 256M
 
   db-backup:
     image: mariadb
@@ -75,11 +70,6 @@ services:
       - TZ="EUROPE/Berlin"
     depends_on:
       - mysql
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 512M
 
   nginx:
     image: raulr/nginx-wordpress
