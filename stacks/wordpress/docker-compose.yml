@@ -1,0 +1,101 @@
+version: '3'
+
+volumes:
+  mysql_data:
+    driver: local
+  www_data:
+    driver: local
+  backup_data:
+    driver: local
+
+networks:
+  web:
+    external: true
+  internal:
+
+services:
+  mysql:
+    image: mariadb
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks:
+      - internal
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+
+  db-backup:
+    image: mariadb
+    environment:
+      MYSQL_PWD: ${MYSQL_DATABASE_PASSWORD}
+      MYSQL_USER: root
+      BACKUP_FREQUENCY: 1
+      BACKUP_NUM_KEEP: 7
+    volumes:
+      - backup_data:/dump
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    entrypoint: |
+      bash -c 'bash -s <<EOF
+      trap "break;exit" SIGHUP SIGINT SIGTERM
+      sleep 2m
+      while /bin/true; do
+        mysqldump -h mysql --all-databases | gzip -c > /dump/dump_\`date +%d-%m-%Y"_"%H_%M_%S\`.sql.gz
+        (ls -t /dump/dump*.sql.gz|head -n $$BACKUP_NUM_KEEP;ls /dump/dump*.sql.gz)|sort|uniq -u|xargs rm -- {}
+        sleep $$BACKUP_FREQUENCY
+      done
+      EOF'
+    depends_on:
+      - mysql
+    networks:
+      - internal
+
+  wordpress:
+    image: wordpress:fpm-alpine
+    volumes:
+      - www_data:/var/www/html/
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    networks:
+      - internal
+    environment:
+      - WORDPRESS_DB_HOST=mysql
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_TABLE_PREFIX=_wp
+      - TZ="EUROPE/Berlin"
+    depends_on:
+      - mysql
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+
+  nginx:
+    image: raulr/nginx-wordpress
+    volumes:
+      - www_data:/var/www/html/
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.frontend.rule=Host:${DOMAIN_NAME}
+      - traefik.port=80
+    networks:
+      - internal
+      - web
+    depends_on:
+      - mysql
+    environment:
+      - POST_MAX_SIZE=128m
+      - BEHIND_PROXY=true
