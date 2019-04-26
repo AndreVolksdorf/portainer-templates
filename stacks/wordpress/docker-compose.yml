@@ -10,7 +10,8 @@ volumes:
 
 networks:
   web:
-    external: true
+    external: 
+      name: web
   internal:
 
 services:
