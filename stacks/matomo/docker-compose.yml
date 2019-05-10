@@ -65,10 +65,8 @@ services:
     - internal
 
   web:
-    image: nginx
+    image: smartpage/nginx-matomo
     restart: always
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     links:
       - app
     volumes_from:
@@ -77,7 +75,7 @@ services:
       - traefik.enable=true
       - traefik.frontend.rule=Host:${DOMAIN_NAME}
       - traefik.port=80
-      - VIRTUAL_HOST
+      - VIRTUAL_HOST=${DOMAIN_NAME}
     networks:
     - internal
     - web
