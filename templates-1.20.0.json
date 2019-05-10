@@ -31,7 +31,7 @@
     "note": "Deploys a Matomo instance connected to a MySQL database.",
     "categories": ["CMS"],
     "platform": "linux",
-    "logo": "https://github.com/AndreVolksdorf/portainer-templates/raw/master/stacks/matomo/logo.png",
+    "logo": "https://raw.githubusercontent.com/SmartPage-Web/nginx-matomo/master/logo.png",
     "repository": {
       "url": "https://github.com/AndreVolksdorf/portainer-templates/",
       "stackfile": "stacks/matomo/docker-compose.yml"
