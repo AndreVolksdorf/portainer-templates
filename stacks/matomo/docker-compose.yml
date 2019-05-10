@@ -22,9 +22,9 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
+      MYSQL_DATABASE: motomo
+      MYSQL_USER: motomo
+      MYSQL_PASSWORD: ${MYSQL_USER_PASSWORD}
     networks:
       - internal
 
