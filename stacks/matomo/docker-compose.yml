@@ -80,7 +80,7 @@ services:
       - VIRTUAL_HOST
     networks:
     - internal
-    - lb_web
+    - web
 
   cron:
     image: piwik:fpm
