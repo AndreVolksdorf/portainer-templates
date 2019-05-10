@@ -50,7 +50,7 @@ services:
       done
       EOF'
     depends_on:
-      - mysql
+      - db
     networks:
       - internal
 
