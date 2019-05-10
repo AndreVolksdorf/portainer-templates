@@ -23,8 +23,8 @@ services:
     command: --max_allowed_packet=64M      # Set max_allowed_packet to 256M (or any other value)
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: motomo
-      MYSQL_USER: motomo
+      MYSQL_DATABASE: matomo
+      MYSQL_USER: matomo
       MYSQL_PASSWORD: ${MYSQL_USER_PASSWORD}
     networks:
       - internal
@@ -32,8 +32,8 @@ services:
   db-backup:
     image: smartpage/mariadb-backup
     environment:
-      - DB_SERVER=example-db
-      - DB_NAME=example
+      - DB_SERVER=db
+      - DB_NAME=matomo
       - DB_USER=root
       - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - DB_DUMP_FREQ=1440
