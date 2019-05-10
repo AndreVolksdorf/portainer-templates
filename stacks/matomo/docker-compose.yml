@@ -42,6 +42,7 @@ services:
       - MD5=TRUE
       - COMPRESSION=XZ
       - SPLIT_DB=FALSE
+      - ENABLE_ZABBIX=FALSE
     volumes:
       - backup_data:/backups
       - /etc/localtime:/etc/localtime:ro
